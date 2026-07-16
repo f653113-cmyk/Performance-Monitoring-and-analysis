@@ -2,9 +2,9 @@
 # Run this in PowerShell to create and push the repo to GitHub
 
 param(
-    [string]$Token = "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",
-    [string]$Username = "R651113-cpmx",
-    [string]$RepoName = "solar-monitoring-system"
+    [string]$Token = "",
+    [string]$Username = "f653113-cmyk",
+    [string]$RepoName = "Performance-Monitoring-and-analysis"
 )
 
 Write-Host "🌞 Solar Monitoring System - GitHub Setup" -ForegroundColor Cyan
