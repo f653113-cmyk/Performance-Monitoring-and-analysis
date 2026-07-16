@@ -1,0 +1,42 @@
+name: Monthly Comprehensive Report
+
+on:
+  schedule:
+    - cron: '0 9 1 * *'  # 1st of month 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch and analyze data
+        run: |
+          python victron_fetcher.py
+          python analyzer.py
+          python dashboard_generator.py
+        env:
+          VRM_API_TOKEN: ${{ secrets.VRM_API_TOKEN }}
+
+      - name: Send comprehensive monthly report
+        run: |
+          python email_sender.py data/analysis.json "${{ secrets.GMAIL_USER }}" "${{ secrets.GMAIL_PASSWORD }}" full ${{ secrets.EMAIL_RECIPIENTS }}
+
+      - name: Upload monthly artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: monthly-report-$(date -u +'%Y-%m')
+          path: reports/
+          retention-days: 90

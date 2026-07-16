@@ -1,0 +1,139 @@
+═══════════════════════════════════════════════════════════════════════════════
+  SOLAR MONITORING SYSTEM - QUICK START 🚀
+═══════════════════════════════════════════════════════════════════════════════
+
+Everything is ready! Follow 3 simple steps to deploy:
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 1: RUN DEPLOYMENT SCRIPT (5 minutes)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Open PowerShell as Administrator
+2. Navigate to THIS folder:
+   cd "C:\Users\GregKipkirui\OneDrive - GivePower\Documents\Valentin EnergieSoftware\PVSOL premium 2025\Projects\Python Work Folder\Performance monitoring\solar-monitoring-github"
+
+3. Run this command:
+   powershell -ExecutionPolicy Bypass -File setup_github.ps1
+
+4. Wait for ✅ SUCCESS message
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 2: CONFIGURE GITHUB SECRETS (3 minutes)
+═══════════════════════════════════════════════════════════════════════════════
+
+After Step 1 succeeds, go to:
+https://github.com/R651113-cpmx/solar-monitoring-system/settings/secrets/actions
+
+Add 4 secrets (click "New repository secret" for each):
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Secret Name          │ Value                                               │
+├──────────────────────┼─────────────────────────────────────────────────────┤
+│ VRM_API_TOKEN        │ Your Victron VRM API token                         │
+│ GMAIL_USER           │ Your Gmail address (e.g., you@gmail.com)           │
+│ GMAIL_PASSWORD       │ 16-char app password (see below)                   │
+│ EMAIL_RECIPIENTS     │ Comma-separated: email1@example.com,email2@...     │
+└──────────────────────┴─────────────────────────────────────────────────────┘
+
+📌 HOW TO GET GMAIL APP PASSWORD:
+   1. Go to: https://myaccount.google.com/apppasswords
+   2. Select: Mail and Windows Computer
+   3. Copy the 16-character password shown
+   4. Paste as GMAIL_PASSWORD (NOT your regular Gmail password!)
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 3: VERIFY & YOU'RE DONE (1 minute)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Go to: https://github.com/R651113-cpmx/solar-monitoring-system/actions
+2. Workflows should appear there
+3. Optional: Click "Run workflow" to test manually
+4. Done! Automation runs on schedule now ✅
+
+═══════════════════════════════════════════════════════════════════════════════
+WHAT YOU HAVE
+═══════════════════════════════════════════════════════════════════════════════
+
+📁 This Folder Contains:
+
+Core Scripts:
+  • victron_fetcher.py        - Fetches data from Victron VRM API
+  • analyzer.py               - Analyzes data, detects anomalies
+  • dashboard_generator.py    - Creates professional dashboards
+  • email_sender.py           - Sends beautiful email reports
+  • monitor_all_sites.py      - Advanced: Multi-site automation
+
+Configuration:
+  • sites.json                - 13 sites pre-configured
+  • requirements.txt          - Python dependencies
+
+Automation:
+  • .github/workflows/        - 3 GitHub Actions workflows
+    ├── daily_sync.yml        (Runs 00:00 UTC every day)
+    ├── weekly_check.yml      (Runs Monday 08:00 UTC)
+    └── monthly_report.yml    (Runs 1st of month 09:00 UTC)
+
+Deploy:
+  • setup_github.ps1          - Deployment script (RUN THIS!)
+  • README.md                 - Full documentation
+  • .gitignore               - Git ignore file
+
+═══════════════════════════════════════════════════════════════════════════════
+AUTOMATED WORKFLOWS
+═══════════════════════════════════════════════════════════════════════════════
+
+⏰ DAILY (00:00 UTC)
+   ✓ Fetches data from all 13 sites
+   ✓ Analyzes performance
+   ✓ Generates per-site dashboards
+   ✓ Uploads to GitHub Artifacts
+
+📧 WEEKLY (Monday 08:00 UTC)
+   ✓ Checks all sites for anomalies
+   ✓ Sends EMAIL only if issues found
+   ✓ Zero emails if everything healthy
+   ✓ Per-site anomaly details
+
+📋 MONTHLY (1st day 09:00 UTC)
+   ✓ Sends comprehensive report
+   ✓ Sent regardless of anomalies
+   ✓ Includes all sites' status
+   ✓ Archives for 90 days
+
+═══════════════════════════════════════════════════════════════════════════════
+⚠️  IMPORTANT - REVOKE TOKEN AFTER SETUP
+═══════════════════════════════════════════════════════════════════════════════
+
+Your GitHub token was used to set up the repository. For security, revoke it:
+
+1. Go to: https://github.com/settings/tokens
+2. Find: "Solar Monitoring System" token
+3. Click: Delete
+4. Done! (You won't need this token again)
+
+═══════════════════════════════════════════════════════════════════════════════
+QUICK COMMANDS
+═══════════════════════════════════════════════════════════════════════════════
+
+Navigate to this folder:
+  cd "C:\Users\GregKipkirui\OneDrive - GivePower\Documents\Valentin EnergieSoftware\PVSOL premium 2025\Projects\Python Work Folder\Performance monitoring\solar-monitoring-github"
+
+Deploy:
+  powershell -ExecutionPolicy Bypass -File setup_github.ps1
+
+View repository:
+  https://github.com/R651113-cpmx/solar-monitoring-system
+
+View workflows:
+  https://github.com/R651113-cpmx/solar-monitoring-system/actions
+
+Add secrets:
+  https://github.com/R651113-cpmx/solar-monitoring-system/settings/secrets/actions
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Ready? Run the PowerShell script now! 🚀
+
+See README.md for full documentation.
+
+═══════════════════════════════════════════════════════════════════════════════

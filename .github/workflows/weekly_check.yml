@@ -1,0 +1,54 @@
+name: Weekly Anomaly Check & Alert
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Monday 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch and analyze data
+        run: |
+          python victron_fetcher.py
+          python analyzer.py
+        env:
+          VRM_API_TOKEN: ${{ secrets.VRM_API_TOKEN }}
+
+      - name: Check for anomalies
+        id: check_anomalies
+        run: |
+          python -c "
+          import json
+          with open('data/analysis.json') as f:
+              data = json.load(f)
+          has_anomalies = len(data.get('anomalies', [])) > 0
+          print(f'has_anomalies={str(has_anomalies).lower()}')
+          " >> $GITHUB_OUTPUT
+
+      - name: Send alert email (if anomalies)
+        if: steps.check_anomalies.outputs.has_anomalies == 'true'
+        run: |
+          python email_sender.py data/analysis.json "${{ secrets.GMAIL_USER }}" "${{ secrets.GMAIL_PASSWORD }}" alert ${{ secrets.EMAIL_RECIPIENTS }}
+
+      - name: Log anomaly check result
+        run: |
+          if [ "${{ steps.check_anomalies.outputs.has_anomalies }}" = "true" ]; then
+            echo "✅ Anomalies detected - Alert email sent"
+          else
+            echo "✅ No anomalies - Skipping alert email"
+          fi

@@ -1,0 +1,80 @@
+{
+  "Kabula": {
+    "id": 933617,
+    "mppt_w": 11500,
+    "inv_kva": 10000,
+    "batt_kwh": 20000
+  },
+  "Ukala AIC Secondary School": {
+    "id": 815230,
+    "mppt_w": 11500,
+    "inv_kva": 10000,
+    "batt_kwh": 20000
+  },
+  "Mamarongo": {
+    "id": 140117,
+    "mppt_w": 4000,
+    "inv_kva": 5000,
+    "batt_kwh": 21312
+  },
+  "Coqui Trek": {
+    "id": 154700,
+    "mppt_w": 5800,
+    "inv_kva": 3000,
+    "batt_kwh": 14400
+  },
+  "Coqui Impact": {
+    "id": 154724,
+    "mppt_w": 3440,
+    "inv_kva": 6000,
+    "batt_kwh": 39072
+  },
+  "Trapiche": {
+    "id": 192342,
+    "mppt_w": 4000,
+    "inv_kva": 3000,
+    "batt_kwh": 3552
+  },
+  "Juanchaco": {
+    "id": 195216,
+    "mppt_w": 11500,
+    "inv_kva": 9000,
+    "batt_kwh": 21312
+  },
+  "Munduruku": {
+    "id": 273142,
+    "mppt_w": 4900,
+    "inv_kva": 3000,
+    "batt_kwh": 14400
+  },
+  "OPC Control": {
+    "id": 304591,
+    "mppt_w": 11500,
+    "inv_kva": 24000,
+    "batt_kwh": 120000
+  },
+  "OPC Kamok": {
+    "id": 320393,
+    "mppt_w": 11500,
+    "inv_kva": 48000,
+    "batt_kwh": 260000
+  },
+  "OPC Morani": {
+    "id": 307120,
+    "mppt_w": 4900,
+    "inv_kva": 3000,
+    "batt_kwh": 60000
+  },
+  "Borana Hq": {
+    "id": 304791,
+    "mppt_w": 11500,
+    "inv_kva": 45000,
+    "batt_kwh": 200000
+  },
+  "Maison Dorcas": {
+    "id": 409822,
+    "mppt_w": 5800,
+    "inv_kva": 45000,
+    "batt_kwh": 30000
+  }
+}
