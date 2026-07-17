@@ -22,10 +22,9 @@ class VictronFetcher:
     def get_all_installations(self):
         """Fetch all installations from Victron account"""
         try:
-            # Try with query parameter instead of header
             url = f"{self.base_url}/installations?access_token={self.token}"
             logger.info(f"DEBUG: Fetching from {url[:60]}...")
-            response = requests.get(url)  # Don't use session headers, use query param
+            response = requests.get(url)
             logger.info(f"DEBUG: Response status: {response.status_code}")
             if response.status_code != 200:
                 logger.info(f"DEBUG: Response text: {response.text}")
@@ -33,7 +32,6 @@ class VictronFetcher:
             return response.json()['records']
         except Exception as e:
             logger.error(f"Failed to fetch installations: {e}")
-            # If query parameter fails, try the original header method
             try:
                 logger.info("Trying with Authorization header...")
                 url = f"{self.base_url}/installations"
@@ -106,4 +104,33 @@ class VictronFetcher:
         }
 
         for site in installations:
-   
+            logger.info(f"Fetching data for {site['name']} (ID: {site['id']})")
+            site_data = self.get_site_data(site['id'], days_back)
+            if site_data:
+                site_data['name'] = site['name']
+                all_data['installations'].append(site_data)
+
+        logger.info(f"Successfully fetched data for {len(all_data['installations'])} sites")
+        return all_data
+
+def main(api_token, output_file='data.json'):
+    """Main execution"""
+    fetcher = VictronFetcher(api_token)
+    data = fetcher.fetch_all_data(days_back=30)
+
+    # Save to file
+    Path('data').mkdir(exist_ok=True)
+    with open(f'data/{output_file}', 'w') as f:
+        json.dump(data, f, indent=2)
+
+    logger.info(f"Data saved to data/{output_file}")
+    return data
+
+if __name__ == "__main__":
+    import sys
+    import os
+    token = os.environ.get('VRM_API_TOKEN')
+    if token:
+        main(token)
+    else:
+        print("Usage: set VRM_API_TOKEN environment variable first")
