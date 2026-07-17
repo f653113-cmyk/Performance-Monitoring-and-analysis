@@ -11,6 +11,8 @@ env:
 jobs:
   report:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--no-deprecation"
 
     steps:
       - uses: actions/checkout@v7
