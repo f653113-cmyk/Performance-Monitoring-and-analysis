@@ -20,7 +20,6 @@ class DashboardGenerator:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solar Monitoring Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {{
             margin: 0;
@@ -60,15 +59,6 @@ class DashboardGenerator:
             margin-bottom: 12px;
             font-weight: 500;
         }}
-        .site-info strong {{
-            font-weight: 700;
-            color: #fff;
-        }}
-        .header p {{
-            color: rgba(255,255,255,0.8);
-            font-size: 0.95em;
-            margin-top: 15px;
-        }}
         .grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -81,20 +71,6 @@ class DashboardGenerator:
             padding: 28px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             border-left: 5px solid #667eea;
-            transition: all 0.3s ease;
-        }}
-        .card:hover {{
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
-        }}
-        .card.critical {{
-            border-left-color: #e74c3c;
-        }}
-        .card.warning {{
-            border-left-color: #f39c12;
-        }}
-        .card.success {{
-            border-left-color: #27ae60;
         }}
         .card h3 {{
             color: #7f8fa3;
@@ -110,21 +86,6 @@ class DashboardGenerator:
             color: #667eea;
             line-height: 1;
         }}
-        .card.critical .value {{
-            color: #e74c3c;
-        }}
-        .card.warning .value {{
-            color: #f39c12;
-        }}
-        .card.success .value {{
-            color: #27ae60;
-        }}
-        .card .unit {{
-            font-size: 0.45em;
-            color: #95a5a6;
-            font-weight: 500;
-            margin-left: 6px;
-        }}
         .details-section {{
             background: white;
             border-radius: 10px;
@@ -137,7 +98,6 @@ class DashboardGenerator:
             margin-bottom: 24px;
             font-size: 1.4em;
             font-weight: 700;
-            letter-spacing: -0.5px;
         }}
         .metrics-table {{
             width: 100%;
@@ -146,9 +106,6 @@ class DashboardGenerator:
         .metrics-table td {{
             padding: 14px 0;
             border-bottom: 1px solid #e8ecf1;
-        }}
-        .metrics-table tr:last-child td {{
-            border-bottom: none;
         }}
         .metrics-table .label {{
             color: #7f8fa3;
@@ -161,54 +118,6 @@ class DashboardGenerator:
             font-weight: 700;
             text-align: right;
             font-size: 15px;
-        }}
-        .anomalies {{
-            background: white;
-            border-radius: 10px;
-            padding: 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }}
-        .anomalies h2 {{
-            color: #e74c3c;
-            margin-bottom: 24px;
-            font-size: 1.3em;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }}
-        .anomaly-item {{
-            padding: 16px;
-            margin-bottom: 12px;
-            border-radius: 6px;
-            border-left: 4px solid #999;
-            background: #f8f9fa;
-        }}
-        .anomaly-item.critical {{
-            background: #fdeef0;
-            border-left-color: #e74c3c;
-        }}
-        .anomaly-item.warning {{
-            background: #fef9f0;
-            border-left-color: #f39c12;
-        }}
-        .anomaly-type {{
-            font-weight: 700;
-            margin-bottom: 6px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            color: #e74c3c;
-        }}
-        .anomaly-item.warning .anomaly-type {{ color: #f39c12; }}
-        .anomaly-message {{
-            color: #2c3e50;
-            margin-bottom: 6px;
-            font-size: 13px;
-            font-weight: 500;
-        }}
-        .anomaly-timestamp {{
-            color: #95a5a6;
-            font-size: 11px;
         }}
         .footer {{
             text-align: center;
@@ -228,12 +137,10 @@ class DashboardGenerator:
             <p>Generated: {timestamp}</p>
         </div>
 
-        <!-- KPI Cards -->
         <div class="grid">
             {kpi_cards}
         </div>
 
-        <!-- Detailed Metrics -->
         <div class="details-section">
             <h2>System Performance Metrics</h2>
             <table class="metrics-table">
@@ -241,14 +148,10 @@ class DashboardGenerator:
             </table>
         </div>
 
-        <!-- Anomalies -->
-        {anomalies_section}
-
         <div class="footer">
             <p>Automated Solar Monitoring System | All times in UTC</p>
         </div>
     </div>
-
 </body>
 </html>
         """
@@ -266,30 +169,20 @@ class DashboardGenerator:
             site_name = site.get('name', 'Unknown')
             site_id = site.get('site_id', 'Unknown')
             kpis = site.get('kpis', {})
-            anomalies = site.get('anomalies', [])
 
             logger.info(f"Generating dashboard for {site_name} (ID: {site_id})")
 
-            # Generate KPI cards
-            kpi_cards = self._generate_kpi_cards(kpis, anomalies)
-
-            # Generate metrics table
+            kpi_cards = self._generate_kpi_cards(kpis)
             metrics_rows = self._generate_metrics_rows(kpis)
 
-            # Generate anomalies section
-            anomalies_section = self._generate_anomalies_section(anomalies)
-
-            # Generate HTML
             html = self.site_dashboard_template.format(
                 site_name=site_name,
                 site_id=site_id,
                 timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"),
                 kpi_cards=kpi_cards,
-                metrics_rows=metrics_rows,
-                anomalies_section=anomalies_section
+                metrics_rows=metrics_rows
             )
 
-            # Save dashboard
             dashboard_path = f'reports/dashboard_site_{site_id}.html'
             with open(dashboard_path, 'w') as f:
                 f.write(html)
@@ -299,65 +192,39 @@ class DashboardGenerator:
 
         return dashboard_files
 
-    def _generate_kpi_cards(self, kpis, anomalies):
+    def _generate_kpi_cards(self, kpis):
         """Generate KPI cards for a site"""
         html = ""
 
-        # Production
         production = kpis.get('total_production_kwh', 0)
         html += f"""
-        <div class="card success">
+        <div class="card">
             <h3>Total Production</h3>
-            <div class="value">{production:.2f}<span class="unit">kWh</span></div>
+            <div class="value">{production:.2f} kWh</div>
         </div>
         """
 
-        # Efficiency
         eff = kpis.get('avg_efficiency_pct', 0)
-        card_class = "card critical" if eff < 75 else "card warning" if eff < 85 else "card success"
         html += f"""
-        <div class="{card_class}">
+        <div class="card">
             <h3>Avg Efficiency</h3>
-            <div class="value">{eff:.1f}<span class="unit">%</span></div>
+            <div class="value">{eff:.1f}%</div>
         </div>
         """
 
-        # Peak Power
         peak = kpis.get('peak_power_w', 0)
         html += f"""
-        <div class="card success">
+        <div class="card">
             <h3>Peak Power</h3>
-            <div class="value">{peak:.0f}<span class="unit">W</span></div>
+            <div class="value">{peak:.0f} W</div>
         </div>
         """
 
-        # Battery SOC
         soc = kpis.get('avg_battery_soc_pct', 0)
-        card_class = "card critical" if soc < 20 else "card warning" if soc < 50 else "card success"
         html += f"""
-        <div class="{card_class}">
+        <div class="card">
             <h3>Avg Battery SOC</h3>
-            <div class="value">{soc:.1f}<span class="unit">%</span></div>
-        </div>
-        """
-
-        # Min Battery
-        min_soc = kpis.get('min_battery_soc_pct', 0)
-        card_class = "card critical" if min_soc < 10 else "card warning" if min_soc < 20 else "card success"
-        html += f"""
-        <div class="{card_class}">
-            <h3>Min Battery SOC</h3>
-            <div class="value">{min_soc:.1f}<span class="unit">%</span></div>
-        </div>
-        """
-
-        # Anomalies
-        anomaly_count = len(anomalies)
-        card_class = "card critical" if anomaly_count > 0 else "card success"
-        html += f"""
-        <div class="{card_class}">
-            <h3>Anomalies Detected</h3>
-            <div class="value">{anomaly_count}</div>
+            <div class="value">{soc:.1f}%</div>
         </div>
         """
 
@@ -368,4 +235,33 @@ class DashboardGenerator:
         html = ""
 
         metrics = [
-          
+            ('Total Production', f"{kpis.get('total_production_kwh', 0):.2f} kWh"),
+            ('Peak Power Output', f"{kpis.get('peak_power_w', 0):.0f} W"),
+            ('Average Efficiency', f"{kpis.get('avg_efficiency_pct', 0):.1f}%"),
+            ('Average Load', f"{kpis.get('avg_load_pct', 0):.1f}%"),
+            ('Average Battery SOC', f"{kpis.get('avg_battery_soc_pct', 0):.1f}%"),
+            ('Minimum Battery SOC', f"{kpis.get('min_battery_soc_pct', 0):.1f}%"),
+            ('PV Voltage (Max)', f"{kpis.get('pv_voltage_max_v', 0):.1f} V"),
+        ]
+
+        for label, value in metrics:
+            html += f"""
+            <tr>
+                <td class="label">{label}</td>
+                <td class="value">{value}</td>
+            </tr>
+            """
+
+        return html
+
+def main(analysis_file='data/analysis.json'):
+    """Main execution"""
+    with open(analysis_file, 'r') as f:
+        analysis = json.load(f)
+
+    generator = DashboardGenerator()
+    dashboard_files = generator.generate_dashboards(analysis)
+    return dashboard_files
+
+if __name__ == "__main__":
+    main()
