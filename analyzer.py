@@ -36,7 +36,7 @@ class SolarAnalyzer:
             'anomalies': []
         }
 
-        for site in raw_data['installations']:
+        for site in raw_data.get('installations', []):
             logger.info(f"Analyzing {site.get('name', 'Unknown')}")
 
             site_analysis = self.analyze_site(site)
@@ -44,9 +44,7 @@ class SolarAnalyzer:
                 analysis['sites'].append(site_analysis)
                 analysis['anomalies'].extend(site_analysis['anomalies'])
 
-        # Calculate summary
         analysis['summary'] = self.calculate_summary(analysis['sites'])
-
         logger.info(f"Analysis complete. Found {len(analysis['anomalies'])} anomalies")
         return analysis
 
@@ -58,13 +56,11 @@ class SolarAnalyzer:
             inv_data = site_data.get('inverter', {}).get('records', {}).get('data', {})
             bat_data = site_data.get('battery', {}).get('records', {}).get('data', {})
 
-            # Extract values
             pv_power = self._extract_values(mppt_data.get('PVP', []))
             pv_voltage = self._extract_values(mppt_data.get('PVV0', []))
             inv_power = self._extract_values(inv_data.get('OP1', []))
             battery_soc = self._extract_values(bat_data.get('SOC', []))
 
-            # Calculate KPIs
             kpis = {
                 'total_production_kwh': sum(pv_power) / 1000 if pv_power else 0,
                 'avg_efficiency_pct': self._calculate_efficiency(pv_power, inv_power),
@@ -75,7 +71,6 @@ class SolarAnalyzer:
                 'pv_voltage_max_v': max(pv_voltage) if pv_voltage else 0,
             }
 
-            # Detect anomalies
             anomalies = self._detect_anomalies(site_name, kpis)
 
             return {
@@ -121,7 +116,6 @@ class SolarAnalyzer:
         anomalies = []
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Efficiency check
         eff = kpis['avg_efficiency_pct']
         if eff < self.thresholds['efficiency_critical']:
             anomalies.append({
@@ -140,7 +134,6 @@ class SolarAnalyzer:
                 'timestamp': f"🕐 {timestamp} UTC"
             })
 
-        # Battery SOC check
         min_soc = kpis['min_battery_soc_pct']
         if min_soc < self.thresholds['battery_critical']:
             anomalies.append({
@@ -159,7 +152,6 @@ class SolarAnalyzer:
                 'timestamp': f"🕐 {timestamp} UTC"
             })
 
-        # PV Voltage check
         pv_voltage = kpis['pv_voltage_max_v']
         if pv_voltage > 500:
             anomalies.append({
@@ -195,4 +187,14 @@ def main(data_file='data/data.json'):
         raw_data = json.load(f)
 
     analyzer = SolarAnalyzer()
-    analysis = analyzer.analyze_all_sites(raw
+    analysis = analyzer.analyze_all_sites(raw_data)
+
+    Path('data').mkdir(exist_ok=True)
+    with open('data/analysis.json', 'w') as f:
+        json.dump(analysis, f, indent=2)
+
+    logger.info("Analysis saved to data/analysis.json")
+    return analysis
+
+if __name__ == "__main__":
+    main()
