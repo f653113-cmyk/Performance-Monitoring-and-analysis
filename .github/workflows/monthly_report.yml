@@ -40,6 +40,7 @@ jobs:
       - name: Upload monthly artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: monthly-report-$(date -u +'%Y-%m')
+          name: monthly-report
           path: reports/
           retention-days: 90
+          if-no-files-found: ignore

@@ -42,6 +42,7 @@ jobs:
           name: dashboards
           path: reports/
           retention-days: 90
+          if-no-files-found: ignore
 
       - name: Commit and push updates
         run: |
